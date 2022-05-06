@@ -1,3 +1,7 @@
+Authors: Joyeuse, Olu-Samuel and Valens
+Library: Adafruit
+Examples: Arduino
+
 #include <LiquidCrystal.h>
 #include <Servo.h>
 #include <SPI.h>
@@ -19,8 +23,6 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance.
 const int pwm = 6;
 const int in_1 = 10;
 const int in_2 = 39;
-
-// Servo instance parameters
 const int in_4 = 48;
 
 // RGB led instance parameters
@@ -62,7 +64,7 @@ String input_password;
 const int buttonPin = 47;
 
 // MetalTouch gate stop control instance parameter
-const int sensorOpen = 42;
+const int sensorOpen = 37;
 const int sensorClose = 43;
 const int relayOpen = 45;
 const int relayClose = 44;
@@ -102,6 +104,8 @@ void setup() {
   lcd.begin(16, 2);
   
   // Print a message to the LCD.
+  lcd.print("Prof. Residence");
+  lcd.setCursor(0, 1);
   lcd.print("System Available");
   delay(5000);
 }
@@ -121,7 +125,7 @@ void loop() {
   keypadCall();
 
   // Button system call
-  //buttonCall();
+  buttonCall();
 
   // MetalTouch system call
   metalTouchCall();
@@ -194,15 +198,9 @@ void buttonCall()
 {
   if (digitalRead(buttonPin) == HIGH)
   {
-    _raiseBar();
-    digitalWrite(buttonPin, LOW);
-  }
-  else if (digitalRead(buttonPin) == HIGH && r == LOW)
-  {
-    _dropBar(); 
-    digitalWrite(buttonPin, LOW);
-  }
-  
+    _dropBar();
+    _moveRight(1);
+  }  
 }
 
 // Keypad function here
@@ -311,12 +309,9 @@ void bluetoothCall()
 // Gate control function
 void _raiseBar()
 {
-  analogWrite(pwm, 50);
-  analogWrite(in_4, 0);
   digitalWrite(g, HIGH);
   digitalWrite(r, LOW);
   digitalWrite(b, LOW);
-  analogWrite(in_1, 30);
   lcd.clear();
   lcd.print("P. Gate: ");
   lcd.setCursor(8, 0);
@@ -330,9 +325,6 @@ void _raiseBar()
 
 void _dropBar()
 {
-  analogWrite(pwm, 50);
-  analogWrite(in_1, 0);
-  analogWrite(in_4, 30);
   digitalWrite(g, LOW);
   digitalWrite(r, HIGH);
   digitalWrite(b, LOW);
@@ -350,8 +342,8 @@ void _dropBar()
 void _moveLeft(int duration)
 {
   analogWrite(pwm, 50);
-  analogWrite(in_4, 0);
-  analogWrite(in_1, 30);
+  digitalWrite(in_4, LOW);
+  digitalWrite(in_1, HIGH);
   digitalWrite(g, HIGH);
   digitalWrite(r, LOW);
   digitalWrite(b, LOW);
@@ -363,8 +355,8 @@ void _moveLeft(int duration)
 
 void _moveRight(int duration)
 {
-  analogWrite(in_1, 0);
-  analogWrite(in_4, 30);
+  digitalWrite(in_1, LOW);
+  digitalWrite(in_4, HIGH);
   digitalWrite(g, LOW);
   digitalWrite(r, HIGH);
   digitalWrite(b, LOW);
